@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feliz Aniversário Bobona</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      background: linear-gradient(-45deg, #ff4081, #7b1fa2, #512da8, #2196f3);
+      background-size: 600% 600%;
+      animation: backgroundMove 10s ease-in-out infinite;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes backgroundMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url('https://www.transparenttextures.com/patterns/stardust.png');
+      opacity: 0.08;
+      z-index: 0;
+      animation: starsTwinkle 6s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes starsTwinkle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-2px); }
+    }
+
+    header {
+      padding: 25px 10px;
+      font-size: 30px;
+      font-weight: bold;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .carousel {
+      margin: 30px auto;
+      width: 90%;
+      max-width: 350px;
+      height: 420px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+
+    .carousel img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+      border-radius: 20px;
+    }
+
+    .carousel img.active {
+      opacity: 1;
+      z-index: 1;
+    }
+
+    .timer-box {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      margin: 25px auto;
+      max-width: 600px;
+      border-radius: 20px;
+      color: #ffeefc;
+      box-shadow: 0 0 12px rgba(0,0,0,0.3);
+    }
+
+    .timer {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .timer div {
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 12px;
+      border-radius: 10px;
+      min-width: 60px;
+      font-weight: bold;
+      color: #fdd3fc;
+    }
+
+    .open-btn {
+      background: #ba68c8;
+      padding: 14px 28px;
+      border-radius: 35px;
+      color: white;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+      margin-top: 30px;
+      animation: pulse 1.5s infinite;
+      transition: background 0.3s ease;
+    }
+
+    .open-btn:hover {
+      background: #ab47bc;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    .story-box {
+      display: none;
+      background-color: rgba(255, 255, 255, 0.15);
+      margin: 25px auto;
+      padding: 30px;
+      max-width: 700px;
+      border-radius: 20px;
+      font-size: 17px;
+      line-height: 1.7;
+      color: #fff0f8;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      animation: fadeIn 1.2s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      margin: 30px 0;
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    audio {
+      display: none;
+    }
+
+    @media (max-width: 500px) {
+      .carousel { height: 320px; }
+    }
+
+    @keyframes fadeInOverlay {
+      from { opacity: 0; transform: scale(1.05); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .shake {
+      animation: shake 0.3s;
+    }
+  </style>
+</head>
+<body>
+
+<!-- BLOQUEIO COM SENHA -->
+<div id="senhaOverlay" style="
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #a55eea, #8854d0);
+  z-index: 9999;
+  padding: 20px;
+  animation: fadeInOverlay 0.8s ease-out;
+">
+  <div style="
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+  ">
+    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+      🎁 <span>Insira a senha para acessar</span>
+    </h2>
+
+    <div style="display: flex; align-items: center; background-color: rgba(255, 255, 255, 0.9); border-radius: 14px; padding: 0 10px; margin-bottom: 20px;">
+  <input
+    type="password"
+    id="inputSenha"
+    placeholder="Digite a senha..."
+    style="
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 14px 10px;
+      font-size: 16px;
+      text-align: center;
+      border-radius: 14px;
+      outline: none;
+      color: #333;
+    "
+    aria-label="Campo de senha"
+  />
+  <span onclick="toggleSenha()" style="
+    cursor: pointer;
+    font-size: 18px;
+    color: #555;
+    padding: 0 10px;
+  ">👁️</span>
+</div>
+
+    <button onclick="verificarSenha()" style="
+      padding: 14px 32px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(to right, #ff758c, #ff7eb3);
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    "
+    onmouseover="this.style.transform='scale(1.05)'"
+    onmouseout="this.style.transform='scale(1)'">
+      Entrar
+    </button>
+
+    <p id="mensagemErro" style="color: #ffcdd2; margin-top: 16px; font-weight: 500;"></p>
+  </div>
+</div>
+
+<!-- CONTEÚDO DA PÁGINA -->
+<div id="conteudo" style="display: none;">
+  <header>💗 Feliz Aniversário Thaisi 💗</header>
+
+  <div class="carousel">
+    <img src="foto1.jpg" class="active" />
+    <img src="foto2.jpg" />
+    <img src="foto3.jpg" />
+  </div>
+
+  <div class="timer-box">
+    <p>Uma amizade que começou em 10 de março de 2023</p>
+    <p>Já dura...</p>
+    <div class="timer">
+      <div><span id="years">0</span><br>Anos</div>
+      <div><span id="months">0</span><br>Meses</div>
+      <div><span id="days">0</span><br>Dias</div>
+      <div><span id="hours">0</span><br>Horas</div>
+      <div><span id="minutes">0</span><br>Min</div>
+      <div><span id="seconds">0</span><br>Seg</div>
+    </div>
+  </div>
+
+  <button class="open-btn" onclick="mostrarMensagem()">🎁 Abrir a cartinha</button>
+
+  <div class="story-box" id="mensagem">
+    <h3>🌌✨ Feliz Aniversário, meu universo bonito ✨🌌</h3>
+<p>Hoje é o dia em que o universo inteiro parece comemorar. As estrelas brilham com mais vontade, como se tentassem imitar o brilho das tuas sardinhas, essas pequenas constelações que o tempo desenhou no teu rosto.</p>
+<p>Te olhar é como observar o céu à noite: hipnotizante, profundo, cheio de mistério... e lindo demais pra explicar com palavras. Seus olhos são como estrelas espalhadas, como se o próprio cosmos quisesse se marcar com o que ele tem de mais bonito.</p>
+<p>O mais especial disso tudo é poder estar aqui hoje, celebrando tua existência. Dividindo esse dia contigo, rindo das tuas histórias, ouvindo tuas ideias malucas, e agradecendo por ter alguém tão incrível por perto.</p>
+<p>Feliz aniversário, que a vida continue te iluminando como você ilumina as das pessoas ao seu redor. 🕊💖</p>
+  </div>
+
+  <footer>Criado por Gabriel</footer>
+
+  <!-- AUDIO como música de fundo -->
+<audio id="musica" loop style="display: none">
+  <source src="Micha_Antonio_Carlos_Jobim_-_Pela_Luz_dos_Olhos_Teus_Pseudo_Vdeo (1).mp3" type="audio/mp4" />
+</audio>
+</div>
+
+<script>
+  const startDate = new Date("2023-03-10T00:00:00");
+
+  function updateTimer() {
+    const now = new Date();
+    let diff = now - startDate;
+
+    const seconds = Math.floor(diff / 1000) % 60;
+    const minutes = Math.floor(diff / (1000 * 60)) % 60;
+    const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
+
+    let years = now.getFullYear() - startDate.getFullYear();
+    let months = now.getMonth() - startDate.getMonth();
+    let days = now.getDate() - startDate.getDate();
+
+    if (days < 0) {
+      months -= 1;
+      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      days += prevMonth.getDate();
+    }
+    if (months < 0) {
+      years -= 1;
+      months += 12;
+    }
+
+    document.getElementById("years").innerText = years;
+    document.getElementById("months").innerText = months;
+    document.getElementById("days").innerText = days;
+    document.getElementById("hours").innerText = hours;
+    document.getElementById("minutes").innerText = minutes;
+    document.getElementById("seconds").innerText = seconds;
+  }
+
+  setInterval(updateTimer, 1000);
+  updateTimer();
+
+  const imgs = document.querySelectorAll(".carousel img");
+  let i = 0;
+  setInterval(() => {
+    imgs[i].classList.remove("active");
+    i = (i + 1) % imgs.length;
+    imgs[i].classList.add("active");
+  }, 3000);
+
+  function mostrarMensagem() {
+    document.getElementById("mensagem").style.display = "block";
+    document.querySelector(".open-btn").style.display = "none";
+    confetti({ particleCount: 200, spread: 150, origin: { y: 0.6 } });
+
+    const video = document.getElementById("musica");
+    if (video && video.paused) video.play();
+  }
+
+  function verificarSenha() {
+    const senha = document.getElementById("inputSenha").value;
+    const senhaCorreta = "thaisi";
+    const erro = document.getElementById("mensagemErro");
+    const input = document.getElementById("inputSenha");
+
+    if (senha === senhaCorreta) {
+      document.getElementById("senhaOverlay").style.display = "none";
+      document.getElementById("conteudo").style.display = "block";
+
+      const video = document.getElementById("musica");
+      if (video) video.play();
+    } else {
+      erro.textContent = "Senha incorreta. Tente novamente!";
+      input.classList.add("shake");
+      setTimeout(() => {
+        input.classList.remove("shake");
+      }, 500);
+    }
+  }
+
+  function toggleSenha() {
+    const input = document.getElementById("inputSenha");
+    input.type = input.type === "password" ? "text" : "password";
+  }
+
+  document.getElementById("inputSenha").addEventListener("keyup", function(event) {
+    if (event.key === "Enter") {
+      verificarSenha();
+    }
+  });
+</script>
+</body>
+</html>
